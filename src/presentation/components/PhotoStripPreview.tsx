@@ -116,12 +116,31 @@ export const PhotoStripPreview: React.FC<PhotoStripPreviewProps> = ({
     return slots;
   };
 
+
+
+  const getBackgroundStyle = () => {
+    if (!bgColor) return {};
+    
+    if (frameConfig.pattern !== 'polkadot') {
+      return { backgroundColor: bgColor };
+    }
+
+    const dotColor = frameConfig.dotColor || '#a1a1aa';
+
+    return {
+      backgroundColor: bgColor,
+      backgroundImage: `radial-gradient(${dotColor} 15%, transparent 16%), radial-gradient(${dotColor} 15%, transparent 16%)`,
+      backgroundSize: '16px 16px',
+      backgroundPosition: '0 0, 8px 8px',
+    };
+  };
+
   return (
     <div className="preview-container">
       <div
         className={`photo-strip layout-${layout}`}
         style={{
-          backgroundColor: bgColor,
+          ...getBackgroundStyle(),
           color: textColor,
         }}
       >

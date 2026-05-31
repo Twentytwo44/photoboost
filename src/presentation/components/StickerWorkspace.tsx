@@ -205,12 +205,31 @@ export const StickerWorkspace: React.FC<StickerWorkspaceProps> = ({
     };
   }, [onSelectSticker]);
 
+
+
+  const getBackgroundStyle = () => {
+    if (!bgColor) return {};
+    
+    if (frameConfig.pattern !== 'polkadot') {
+      return { backgroundColor: bgColor };
+    }
+
+    const dotColor = frameConfig.dotColor || '#a1a1aa';
+
+    return {
+      backgroundColor: bgColor,
+      backgroundImage: `radial-gradient(${dotColor} 15%, transparent 16%), radial-gradient(${dotColor} 15%, transparent 16%)`,
+      backgroundSize: '16px 16px',
+      backgroundPosition: '0 0, 8px 8px',
+    };
+  };
+
   return (
     <div
       ref={workspaceRef}
       className={`sticker-workspace-container photo-strip layout-${layout}`}
       style={{
-        backgroundColor: bgColor,
+        ...getBackgroundStyle(),
         color: textColor,
         cursor: 'default',
       }}

@@ -7,6 +7,8 @@ export interface FrameConfig {
   fontFamily: string;   // font family for the text
   layout: LayoutType;   // active layout type
   aspectRatio: number;  // aspect ratio of individual photos
+  pattern: 'none' | 'polkadot'; // background pattern style
+  dotColor: string;     // color of the polka dots
 }
 
 export const DEFAULT_FRAME_CONFIG: FrameConfig = {
@@ -16,4 +18,6 @@ export const DEFAULT_FRAME_CONFIG: FrameConfig = {
   fontFamily: 'serif',
   layout: '4-cut',
   aspectRatio: 4 / 3,
+  pattern: 'none',
+  dotColor: '#a1a1aa',
 };

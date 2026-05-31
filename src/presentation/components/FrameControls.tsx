@@ -183,6 +183,64 @@ export const FrameControls: React.FC<FrameControlsProps> = ({
         </div>
       </div>
 
+      {/* 4.5. Frame Pattern Selector */}
+      <div className="control-group">
+        <div className="panel-title">
+          Frame Pattern
+        </div>
+        <div className="control-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+          <button
+            onClick={() => updateConfig('pattern', 'none')}
+            className={`selector-btn ${frameConfig.pattern === 'none' ? 'active' : ''}`}
+            disabled={isCapturing}
+            style={{ padding: '6px', fontSize: '0.75rem' }}
+          >
+            Solid
+          </button>
+          <button
+            onClick={() => updateConfig('pattern', 'polkadot')}
+            className={`selector-btn ${frameConfig.pattern === 'polkadot' ? 'active' : ''}`}
+            disabled={isCapturing}
+            style={{ padding: '6px', fontSize: '0.75rem' }}
+          >
+            Polka Dot
+          </button>
+        </div>
+
+        {frameConfig.pattern === 'polkadot' && (
+          <div style={{ marginTop: '12px' }}>
+            <div className="panel-title">
+              Dot Color
+            </div>
+            <div className="color-presets">
+              {[
+                { name: 'Gray', value: '#a1a1aa' },
+                { name: 'Red', value: '#f87171' },
+                { name: 'Blue', value: '#60a5fa' },
+                { name: 'Green', value: '#34d399' },
+                { name: 'Yellow', value: '#fbbf24' },
+                { name: 'White', value: '#ffffff' },
+              ].map((col) => (
+                <div
+                  key={col.value}
+                  className={`color-dot ${frameConfig.dotColor.toLowerCase() === col.value ? 'active' : ''}`}
+                  style={{ backgroundColor: col.value, width: '18px', height: '18px', border: '1px solid rgba(0,0,0,0.06)' }}
+                  onClick={() => updateConfig('dotColor', col.value)}
+                />
+              ))}
+              <div className="color-picker-wrapper" style={{ width: '18px', height: '18px' }}>
+                <input
+                  type="color"
+                  className="color-picker-input"
+                  value={frameConfig.dotColor}
+                  onChange={(e) => updateConfig('dotColor', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* 5. Custom Bottom Caption & Fonts */}
       <div className="control-group" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
         <div className="panel-title">

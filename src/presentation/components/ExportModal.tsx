@@ -90,8 +90,42 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         canvas.height = canvasHeight;
 
         // 1. Draw Background Frame Paper
-        ctx.fillStyle = frameConfig.bgColor;
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        if (frameConfig.pattern === 'polkadot') {
+          const dotColor = frameConfig.dotColor || '#a1a1aa';
+          
+          const patternCanvas = document.createElement('canvas');
+          patternCanvas.width = 60;
+          patternCanvas.height = 60;
+          const pctx = patternCanvas.getContext('2d');
+          if (pctx) {
+            pctx.fillStyle = frameConfig.bgColor;
+            pctx.fillRect(0, 0, 60, 60);
+            
+            pctx.fillStyle = dotColor;
+            pctx.beginPath();
+            pctx.arc(30, 30, 4, 0, 2 * Math.PI);
+            pctx.arc(0, 0, 4, 0, 2 * Math.PI);
+            pctx.arc(60, 0, 4, 0, 2 * Math.PI);
+            pctx.arc(0, 60, 4, 0, 2 * Math.PI);
+            pctx.arc(60, 60, 4, 0, 2 * Math.PI);
+            pctx.fill();
+            
+            const pattern = ctx.createPattern(patternCanvas, 'repeat');
+            if (pattern) {
+              ctx.fillStyle = pattern;
+              ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            } else {
+              ctx.fillStyle = frameConfig.bgColor;
+              ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            }
+          } else {
+            ctx.fillStyle = frameConfig.bgColor;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+          }
+        } else {
+          ctx.fillStyle = frameConfig.bgColor;
+          ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        }
 
         // 2. Draw Captured Photos into slots
         const totalCuts =
