@@ -4,12 +4,15 @@ export class StorageServiceImpl implements IStorageService {
   async uploadImage(base64DataUrl: string): Promise<string> {
     try {
       const blob = this.dataURLtoBlob(base64DataUrl);
-      const formData = new FormData();
-      formData.append('file', blob, `photobooth-${Date.now()}.png`);
+      const binId = this.generateRandomBinId();
+      const filename = `photobooth-${Date.now()}.png`;
 
-      const response = await fetch('https://tmpfiles.org/api/v1/upload', {
+      const response = await fetch(`https://filebin.net/${binId}/${filename}`, {
         method: 'POST',
-        body: formData,
+        body: blob,
+        headers: {
+          'Content-Type': 'image/png',
+        },
       });
 
       if (!response.ok) {
@@ -19,20 +22,24 @@ export class StorageServiceImpl implements IStorageService {
 
       const result = await response.json();
       
-      if (result.status !== 'success' || !result.data || !result.data.url) {
-        throw new Error(result.message || 'Invalid response structure from upload service');
+      if (!result.bin || !result.file) {
+        throw new Error('Invalid response structure from upload service');
       }
 
-      // Convert standard tmpfiles.org link to direct download link
-      // E.g., 'https://tmpfiles.org/168285/photobooth-123.png' -> 'https://tmpfiles.org/dl/168285/photobooth-123.png'
-      const originalUrl = result.data.url;
-      const directDownloadUrl = originalUrl.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/');
-      
-      return directDownloadUrl;
+      return `https://filebin.net/${result.bin.id}/${result.file.filename}`;
     } catch (error: any) {
       console.error('Error uploading image to cloud storage:', error);
       throw new Error(`Failed to upload image: ${error.message || error}`);
     }
+  }
+
+  private generateRandomBinId(): string {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 16; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
   }
 
   private dataURLtoBlob(dataurl: string): Blob {
