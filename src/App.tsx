@@ -13,6 +13,7 @@ import type { FrameConfig } from './domain/entities/FrameConfig';
 
 import './presentation/styles/theme.css';
 import { Camera } from 'lucide-react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 export const App: React.FC = () => {
   const [frameConfig, setFrameConfig] = useState<FrameConfig>(DEFAULT_FRAME_CONFIG);
@@ -259,6 +260,7 @@ export const App: React.FC = () => {
       {isDonateOpen && (
         <DonateModal onClose={() => setIsDonateOpen(false)} />
       )}
+      <SpeedInsights />
     </div>
   );
 };
