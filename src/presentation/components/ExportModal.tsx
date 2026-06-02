@@ -102,13 +102,16 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             pctx.fillRect(0, 0, 60, 60);
             
             pctx.fillStyle = dotColor;
-            pctx.beginPath();
-            pctx.arc(30, 30, 4, 0, 2 * Math.PI);
-            pctx.arc(0, 0, 4, 0, 2 * Math.PI);
-            pctx.arc(60, 0, 4, 0, 2 * Math.PI);
-            pctx.arc(0, 60, 4, 0, 2 * Math.PI);
-            pctx.arc(60, 60, 4, 0, 2 * Math.PI);
-            pctx.fill();
+            const drawDot = (x: number, y: number) => {
+              pctx.beginPath();
+              pctx.arc(x, y, 4, 0, 2 * Math.PI);
+              pctx.fill();
+            };
+            drawDot(30, 30);
+            drawDot(0, 0);
+            drawDot(60, 0);
+            drawDot(0, 60);
+            drawDot(60, 60);
             
             const pattern = ctx.createPattern(patternCanvas, 'repeat');
             if (pattern) {
@@ -126,6 +129,33 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           ctx.fillStyle = frameConfig.bgColor;
           ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         }
+
+        const drawImageCover = (
+          pCtx: CanvasRenderingContext2D,
+          pImg: HTMLImageElement,
+          dx: number,
+          dy: number,
+          dWidth: number,
+          dHeight: number
+        ) => {
+          const imgRatio = pImg.width / pImg.height;
+          const destRatio = dWidth / dHeight;
+          
+          let sx = 0;
+          let sy = 0;
+          let sWidth = pImg.width;
+          let sHeight = pImg.height;
+          
+          if (imgRatio > destRatio) {
+            sWidth = pImg.height * destRatio;
+            sx = (pImg.width - sWidth) / 2;
+          } else if (imgRatio < destRatio) {
+            sHeight = pImg.width / destRatio;
+            sy = (pImg.height - sHeight) / 2;
+          }
+          
+          pCtx.drawImage(pImg, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+        };
 
         // 2. Draw Captured Photos into slots
         const totalCuts =
@@ -156,8 +186,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               ctx.rect(x, y, slotWidth, slotHeight);
               ctx.clip();
               
-              // Draw image (already filter-baked)
-              ctx.drawImage(img, x, y, slotWidth, slotHeight);
+              // Draw image (already filter-baked, object-fit: cover)
+              drawImageCover(ctx, img, x, y, slotWidth, slotHeight);
               ctx.restore();
               imgResolve();
             };
